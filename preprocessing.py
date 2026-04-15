@@ -1,14 +1,17 @@
 """
-Preprocessing pipeline for solar irradiance prediction
+Spatio-Temporal Preprocessing Pipeline for Solar Irradiance Prediction
 Target: GHI (Global Horizontal Irradiance)
+Multi-site modeling with spatial correlations
 """
 
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import seasonal_decompose
 import os
 import warnings
 import pickle
+from pathlib import Path
 from path_utils import ensure_dir, NSRDB_DIR, X_TRAIN_FILE, X_TEST_FILE, Y_TRAIN_FILE, Y_TEST_FILE, SCALERS_FILE
 warnings.filterwarnings('ignore')
 

@@ -59,3 +59,20 @@ TRANSFORMER_MODEL_FILE = get_path('models/transformer_model.h5')
 # Results files
 ARIMA_PREDICTIONS_FILE = get_path('results/arima_predictions.png')
 EVALUATION_REPORT_FILE = get_path('results/evaluation_report.txt')
+
+# Spatio-Temporal Data Files
+X_TRAIN_ST_FILE = get_path('data/X_train_st.npy')
+X_TEST_ST_FILE = get_path('data/X_test_st.npy')
+Y_TRAIN_ST_FILE = get_path('data/y_train_st.npy')
+Y_TEST_ST_FILE = get_path('data/y_test_st.npy')
+CORR_MATRIX_FILE = get_path('data/corr_matrix.npy')
+DIST_MATRIX_FILE = get_path('data/dist_matrix.npy')
+DATES_TRAIN_FILE = get_path('data/dates_train.npy')
+DATES_TEST_FILE = get_path('data/dates_test.npy')
+METADATA_FILE = get_path('data/metadata.pkl')
+
+# Spatio-Temporal Model Files
+TRANSFORMER_ST_BEST_FILE = get_path('models/transformer_st_best.h5')
+TRANSFORMER_ST_FINAL_FILE = get_path('models/transformer_st_final.h5')
+GRU_BEST_FILE = get_path('models/gru_best.h5')
+GRU_FINAL_FILE = get_path('models/gru_final.h5')
