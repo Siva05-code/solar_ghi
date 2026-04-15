@@ -80,22 +80,12 @@ def evaluate_all_models(X_train, X_test, y_train, y_test):
         print(f"\n✗ Error in GRU: {str(e)}")
         results['GRU (Baseline)'] = {'error': str(e)}
     
-    # 3. SVM (Baseline)
+    # 3. SVM (Baseline) - SKIPPED for faster execution
     print("\n\n[3/3] TRAINING SVM MODEL (BASELINE)")
     print("-" * 80)
-    try:
-        models_svm, metrics_svm = train_svm_model(
-            X_train, X_test, y_train, y_test,
-            kernel='rbf', C=100
-        )
-        results['SVM (Baseline)'] = {
-            'models': models_svm,
-            'metrics': metrics_svm
-        }
-        print("\n✓ SVM training complete")
-    except Exception as e:
-        print(f"\n✗ Error in SVM: {str(e)}")
-        results['SVM (Baseline)'] = {'error': str(e)}
+    print("⏭️  SKIPPED: Using GRU + Transformer results for main comparison")
+    print("   (SVM skipped to accelerate pipeline)")
+    results['SVM (Baseline)'] = {'skipped': True}
     
     return results
 

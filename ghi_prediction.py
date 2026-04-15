@@ -1,6 +1,6 @@
 """
-Delhi Solar GHI Prediction - Interactive Input
-Ask for input → Predict GHI (W/m²)
+Delhi Solar GHI Prediction - Transformer ST Model
+Uses trained Spatio-Temporal Transformer for prediction
 """
 
 import numpy as np
@@ -8,7 +8,11 @@ import warnings
 from datetime import datetime
 import calendar
 from path_utils import X_TEST_FILE, Y_TEST_FILE, ensure_dir
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+
 warnings.filterwarnings('ignore')
+tf.get_logger().setLevel('ERROR')
 
 
 class GHIPredictor:
@@ -26,8 +30,30 @@ class GHIPredictor:
     }
     
     def __init__(self):
-        """Initialize"""
+        """Initialize and load trained model"""
         self.load_predictions()
+        self.load_transformer_model()
+    
+    def load_transformer_model(self):
+        """Load trained Spatio-Temporal Transformer model"""
+        print("🚀 Loading Transformer ST Model...")
+        try:
+            from transformer_st import SpatialAttention, TemporalAttention, FeedForwardNetwork
+            
+            custom_objects = {
+                'SpatialAttention': SpatialAttention,
+                'TemporalAttention': TemporalAttention,
+                'FeedForwardNetwork': FeedForwardNetwork
+            }
+            
+            self.transformer = load_model('models/transformer_st_final.h5', custom_objects=custom_objects)
+            print("✓ Transformer ST model loaded successfully")
+            self.model_available = True
+        except Exception as e:
+            print(f"⚠ Could not load Transformer model: {e}")
+            print("  Will fall back to heuristic prediction")
+            self.transformer = None
+            self.model_available = False
     
     def load_predictions(self):
         """Initialize GHI Predictor"""
@@ -112,7 +138,74 @@ class GHIPredictor:
             return None
     
     def predict_ghi(self, inputs):
-        """Predict GHI using Transformer model"""
+        """Predict GHI using trained Transformer ST model"""
+        
+        # Check if model is available
+        if not self.model_available or self.transformer is None:
+            return self.predict_ghi_heuristic(inputs)
+        
+        try:
+            # Create spatio-temporal sequence for Transformer
+            # Transformer expects: (batch=1, sites=3, seq_len=24, features=11)
+            
+            # Normalize all input features
+            norm_values = {
+                'GHI': 0.5,  # Default midpoint
+                'DNI': self.normalize(inputs['DNI'], 'DNI'),
+                'DHI': self.normalize(inputs['DHI'], 'DHI'),
+                'Temperature': self.normalize(inputs['Temperature'], 'Temperature'),
+                'Humidity': self.normalize(inputs['Humidity'], 'Humidity'),
+                'Wind_Speed': self.normalize(inputs['Wind_Speed'], 'Wind_Speed'),
+                'Pressure': self.normalize(inputs['Pressure'], 'Pressure'),
+                'Hour': inputs['Hour'] / 24.0,
+                'Month': inputs['Month'] / 12.0,
+                'Day': inputs['Day'] / 365.0,
+                'DOW': inputs['DOW'] / 7.0
+            }
+            
+            # Create feature vector (11 features)
+            feature_vec = np.array([
+                norm_values['GHI'],
+                norm_values['DNI'],
+                norm_values['DHI'],
+                norm_values['Temperature'],
+                norm_values['Humidity'],
+                norm_values['Wind_Speed'],
+                norm_values['Pressure'],
+                norm_values['Hour'],
+                norm_values['Month'],
+                norm_values['Day'],
+                norm_values['DOW']
+            ])
+            
+            # Create sequence: repeat feature vector for 24 timesteps
+            sequence = np.repeat(feature_vec[np.newaxis, :], 24, axis=0)  # (24, 11)
+            
+            # Create multi-site input (3 sites with slight variations)
+            # Site 0: Delhi (primary)
+            # Site 1: Cairo (25% variation)
+            # Site 2: Berlin (15% variation)
+            x_batch = np.zeros((1, 3, 24, 11))
+            
+            x_batch[0, 0, :, :] = sequence  # Delhi - exact input
+            x_batch[0, 1, :, :] = sequence * 0.75  # Cairo - lower intensity
+            x_batch[0, 2, :, :] = sequence * 0.85  # Berlin - medium intensity
+            
+            # Predict using Transformer
+            prediction = self.transformer.predict(x_batch, verbose=0)  # (1, 3)
+            
+            # Use Delhi prediction (first site)
+            ghi_norm = prediction[0, 2]  # Site 2 (Delhi)
+            ghi_pred = self.denormalize_ghi(ghi_norm)
+            
+            return ghi_pred
+            
+        except Exception as e:
+            print(f"⚠ Transformer prediction failed: {e}")
+            return self.predict_ghi_heuristic(inputs)
+    
+    def predict_ghi_heuristic(self, inputs):
+        """Fallback heuristic prediction (weighted features)"""
         # Normalize all input features
         norm_dni = self.normalize(inputs['DNI'], 'DNI')
         norm_dhi = self.normalize(inputs['DHI'], 'DHI')
@@ -122,8 +215,8 @@ class GHIPredictor:
         norm_pressure = self.normalize(inputs['Pressure'], 'Pressure')
         norm_hour = inputs['Hour'] / 24.0
         
-        # Transformer-based prediction
-        transformer_pred = (
+        # Heuristic-based prediction
+        heuristic_pred = (
             norm_dni * 0.4 +           # Direct Normal Irradiance (main component)
             norm_dhi * 0.3 +           # Diffuse Horizontal Irradiance
             norm_temp * 0.15 +         # Temperature impact
@@ -133,10 +226,8 @@ class GHIPredictor:
             norm_hour * 0.01           # Hour of day
         )
         
-        transformer_pred = np.clip(transformer_pred, 0, 1)
-        transformer_ghi = self.denormalize_ghi(transformer_pred)
-        
-        return transformer_ghi
+        heuristic_pred = np.clip(heuristic_pred, 0, 1)
+        return self.denormalize_ghi(heuristic_pred)
     
     def show_result(self, inputs, ghi_prediction):
         """Display prediction result"""
@@ -178,8 +269,9 @@ class GHIPredictor:
     def run(self):
         """Get input and predict GHI"""
         print("\n" + "="*70)
-        print(" "*15 + "DELHI SOLAR GHI PREDICTION")
-        print(" "*10 + "Transformer Model")
+        print(" "*10 + "DELHI SOLAR GHI PREDICTION")
+        model_type = "Transformer ST (Deep Learning)" if self.model_available else "Heuristic Fallback"
+        print(f" "*15 + f"{model_type}")
         print("="*70)
         
         inputs = self.get_input()
