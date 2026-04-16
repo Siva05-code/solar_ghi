@@ -17,7 +17,7 @@ This project implements a comprehensive research initiative proposing novel Tran
 
 ✅ **Transformer-ST Architecture**: Fully implemented with multi-head spatial attention (4 heads) and multi-head temporal attention (8 heads) mechanisms  
 ✅ **Multi-Site Learning**: Explicit spatial correlation learning across 3 geographically diverse solar measurement sites  
-✅ **Comprehensive Baselines**: 5 competing models (ARIMA, SVM, Random Forest, LSTM, GRU) for comparative analysis  
+✅ **Comprehensive Baselines**: 6 competing models (ARIMA, SVM, Random Forest, XGBoost, LSTM, GRU) for comparative analysis  
 ✅ **Multi-Horizon Forecasting**: Evaluation framework for 1-hour, 6-hour, 12-hour, and 24-hour ahead predictions  
 ✅ **Real-World Data**: 3 years of synchronized NSRDB data across Germany, Egypt, and India  
 ✅ **Hypothesis Validation**: Rigorous statistical testing of 4 core research hypotheses  
@@ -62,7 +62,7 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 | **Synchronized Records** | 13,286 common observations |
 | **Training Samples** | 10,609 sequences (80%) |
 | **Test Samples** | 2,653 sequences (20%) |
-| **Sequence Length** | 24 hours (48 × 30-min intervals) |
+| **Sequence Length** | 12 hours (24 × 30-min intervals, L=24) |
 | **Total Features** | 11 (7 weather + 4 temporal) |
 
 ### Geographic Locations
@@ -78,7 +78,7 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 - Mean GHI: 0.57 W/m² | Variability: Stable year-round
 
 **Location 3: India, Delhi** (28.61°N, 77.23°E)
-- Climate: Subtropical monsoon
+- Climate: Semi-arid / monsoon
 - Characteristics: Monsoon-influenced, seasonal patterns
 - Mean GHI: 0.47 W/m² | Variability: Monsoon clouds affect summer
 
@@ -302,7 +302,7 @@ print(f"Transformer-ST R²: {metrics['R2']:.4f}")
 
 **Architecture Flow**:
 ```
-Input: (batch, 3 sites, 24 hours, 11 features)
+Input: (batch, 3 sites, L=24 steps, 11 features)
   ↓
 Dense Projection → Embedding dimension 64
   ↓
@@ -604,7 +604,7 @@ This project implements a comprehensive research initiative proposing novel Tran
 
 ✅ **Transformer-ST Architecture**: Fully implemented with multi-head spatial attention (4 heads) and multi-head temporal attention (8 heads) mechanisms  
 ✅ **Multi-Site Learning**: Explicit spatial correlation learning across 3 geographically diverse solar measurement sites  
-✅ **Comprehensive Baselines**: 5 competing models (ARIMA, SVM, Random Forest, LSTM, GRU) for comparative analysis  
+✅ **Comprehensive Baselines**: 6 competing models (ARIMA, SVM, Random Forest, XGBoost, LSTM, GRU) for comparative analysis  
 ✅ **Multi-Horizon Forecasting**: Evaluation framework for 1-hour, 6-hour, 12-hour, and 24-hour ahead predictions  
 ✅ **Real-World Data**: 3 years of synchronized data from NSRDB across Germany, Egypt, and India  
 ✅ **Hypothesis Validation**: Rigorous statistical testing of 4 core research hypotheses  
@@ -661,7 +661,7 @@ A Transformer-based architecture that:
 | **Synchronized Records** | 13,286 common observations across all sites |
 | **Training Samples** | 10,609 sequences (80% temporal split) |
 | **Test Samples** | 2,653 sequences (20% temporal split) |
-| **Sequence Length** | 24 hours (48 × 30-minute intervals) |
+| **Sequence Length** | 12 hours (24 × 30-min intervals, L=24) |
 | **Total Features** | 11 (7 weather + 4 temporal) |
 
 ### Geographic Locations
@@ -685,7 +685,7 @@ A Transformer-based architecture that:
 **Location 3: India, Delhi**
 - Coordinates: 28.61°N, 77.23°E
 - Elevation: 216 meters
-- Climate: Subtropical monsoon
+- Climate: Semi-arid / monsoon
 - Characteristics: Monsoon-influenced, seasonal patterns
 - Mean GHI (normalized): 0.47 W/m²
 - Variability: Monsoon clouds affect summer months
@@ -1349,7 +1349,7 @@ print(f"Predicted GHI: {ghi_prediction:.2f} W/m²")
 **Architecture Overview**:
 
 ```
-Input: (batch, 3 sites, 24 hours, 11 features)
+Input: (batch, 3 sites, L=24 steps, 11 features)
   ↓
 Dense Projection → (batch, 3, 24, 64)  [Embedding dimension]
   ↓
@@ -1471,7 +1471,7 @@ Output: (batch, n_sites, seq_len, 64)
 
 Architecture:
 ```
-Input: (batch, 3 sites, 24 hours, 11 features)
+Input: (batch, 3 sites, L=24 steps, 11 features)
   ↓
 Reshape → (batch, 3, 24*11)  [Flatten features]
   ↓
@@ -1517,7 +1517,7 @@ Output: (batch, 3)
 
 **Simplified RNN Variant**:
 ```
-Input: (batch, 3 sites, 24 hours, 11 features)
+Input: (batch, 3 sites, L=24 steps, 11 features)
   ↓
 Reshape → (batch, 3, 264)  [24*11]
   ↓
