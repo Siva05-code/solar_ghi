@@ -55,47 +55,66 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 
 | Property | Value |
 |----------|-------|
-| **Source** | National Solar Radiation Database (NSRDB) - MERRA-2 / NREL |
+| **Source** | National Solar Radiation Database (NSRDB) - MSG-IODC Satellite API (NREL) |
 | **Time Period** | January 1, 2017 - December 31, 2019 (3 years) |
-| **Temporal Resolution** | 30-minute intervals |
-| **Geographic Locations** | 6 sites spanning multiple continents |
-| **Synchronized Records** | Aligned across all locations |
-| **Training Samples** | Multi-site sequences (80%) |
-| **Test Samples** | Multi-site sequences (20%) |
-| **Sequence Length** | 12 hours (24 × 30-min intervals, L=24) |
+| **Temporal Resolution** | 60-minute intervals |
+| **Geographic Locations** | 6 sites spanning 3 continents (15,000+ km range) |
+| **Synchronized Records** | 3,394 common observations (training) + 849 test samples |
+| **Training Samples** | 3,394 sequences (6 sites × 24-hour windows) |
+| **Test Samples** | 849 sequences |
+| **Sequence Length** | 24 hours (24 × 60-min intervals) |
 | **Total Features** | 11 (7 weather + 4 temporal) |
+| **Data Shape** | X_train: (3394, 6, 24, 11) | X_test: (849, 6, 24, 11) |
 
 ### Geographic Locations (6 Sites - Multi-Continent Coverage)
 
-**Location 1: Germany, Berlin** (52.52°N, 13.40°E)
+| # | Location | Lat/Long | Climate Class | GHI Profile | New (April 2026) |
+|---|----------|----------|---------------|------------|-----------------|
+| 1 | Germany, Berlin | 52.52°N, 13.40°E | Temperate Oceanic | Moderate + seasonal | Original |
+| 2 | Egypt, Cairo | 30.04°N, 31.24°E | Desert Subtropical | Very High + stable | Original |
+| 3 | India, Delhi | 28.61°N, 77.23°E | Semi-Arid/Monsoon | High + monsoon | Original |
+| 4 | **India, Jaipur** | 26.91°N, 75.79°E | Hot Desert (Arid) | **Very High + stable** | ✨ NEW |
+| 5 | **India, Ahmedabad** | 23.03°N, 72.58°E | Semi-Arid Subtropical | **High + moderate** | ✨ NEW |
+| 6 | **India, Lucknow** | 26.85°N, 80.95°E | Subtropical/Monsoon | **Moderate + monsoon** | ✨ NEW |
+
+**Detailed Location Profiles**:
+
+**Location 1: Germany, Berlin** (52.52°N, 13.40°E) **[Original]**
 - Climate: Temperate oceanic
 - Characteristics: High cloud variability, seasonal extremes
-- Profile: Moderate solar intensity with seasonal variation
-- Mean GHI: 0.24 W/m² | Variability: 4-5x seasonal
+- Profile: Moderate solar intensity with significant seasonal variation
+- Mean GHI (normalized): 0.24 | Variability: 4-5x seasonal
+- Grid relevance: Baseline for challenging European conditions
 
-**Location 2: Egypt, Cairo** (30.04°N, 31.24°E)
+**Location 2: Egypt, Cairo** (30.04°N, 31.24°E) **[Original]**
 - Climate: Desert subtropical
 - Characteristics: High solar potential, extremely low variability
-- Profile: Consistently high solar intensity, clear skies
-- Mean GHI: 0.57 W/m² | Variability: Stable year-round
+- Profile: Consistently high solar intensity, clear skies year-round
+- Mean GHI (normalized): 0.57 | Variability: Highly stable (<1.5x)
+- Grid relevance: Optimal solar region, minimal clouding
 
-**Location 3: India, Delhi** (28.61°N, 77.23°E)
+**Location 3: India, Delhi** (28.61°N, 77.23°E) **[Original]**
 - Climate: Semi-arid / monsoon
-- Characteristics: Monsoon-influenced, seasonal patterns
-- Profile: Moderate-to-high intensity with monsoon impact
-- Mean GHI: 0.47 W/m² | Variability: Monsoon clouds affect summer
+- Characteristics: Monsoon-influenced, pronounced seasonal patterns
+- Profile: Moderate-to-high intensity with summer monsoon impact
+- Mean GHI (normalized): 0.47 | Variability: Monsoon clouds affect May-Sept
+- Grid relevance: Represents South Asian patterns
 
-**Location 4: India, Jaipur** (26.91°N, 75.79°E) **[NEW - Very Hot, Arid]**
-- Climate: Hot desert / arid
-- Characteristics: Extremely high temperatures, very low cloud cover
-- Profile: Highest solar intensity with minimal variability
-- Mean GHI: ~0.55 W/m² | Variability: Extremely stable, desert conditions
+**Location 4: India, Jaipur** (26.91°N, 75.79°E) **[NEW - Very Hot/Arid]** 🔥
+- Climate: Hot desert / arid (Thar Desert proximity)
+- Characteristics: Extremely high temperatures (>45°C summer), very low cloud cover
+- Profile: **Highest solar intensity** with minimal variability, ~4-5% less clouding than Cairo
+- Mean GHI (normalized): ~0.55-0.58 | Variability: Extremely stable (<1.2x)
+- Temperature extremes: Min 0°C (winter), Max 48°C (summer)
+- Grid relevance: Ideal for solar farms, minimal forecast uncertainty
 
-**Location 5: India, Ahmedabad** (23.03°N, 72.58°E) **[NEW - Medium Hot, Semi-arid]**
+**Location 5: India, Ahmedabad** (23.03°N, 72.58°E) **[NEW - Medium Hot/Semi-Arid]** ☀️
 - Climate: Semi-arid subtropical
-- Characteristics: High temperatures, moderate cloud cover
-- Profile: High solar intensity with moderate seasonal variation
-- Mean GHI: ~0.50 W/m² | Variability: Moderate, semi-arid patterns
+- Characteristics: High temperatures (38-42°C summer), moderate cloud cover
+- Profile: **High solar intensity** with moderate seasonal variation
+- Mean GHI (normalized): ~0.50-0.53 | Variability: Moderate (2-3x seasonal)
+- Seasonality: Monsoon affects June-September (clouds), post-monsoon clear
+- Grid relevance: Represents hot semi-arid zones, moderate predictability
 
 **Location 6: India, Lucknow** (26.85°N, 80.95°E) **[NEW - Less Hot, Temperate-Subtropical]**
 - Climate: Subtropical humid / monsoon
