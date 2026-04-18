@@ -2,4 +2,7 @@ venv/
 __pycache__/
 nsrdb_data/
 data/
+models/
 *.npy
+*.pkl
+*.h5

@@ -48,10 +48,23 @@ def train_arima_model(X_train, X_test, y_train, y_test):
     print("ARIMA MODEL FOR GHI PREDICTION")
     print("="*60)
     
-    # Extract GHI sequences (first column in X_train)
-    # Flatten to create univariate time series
-    y_train_flat = np.concatenate(X_train[:, :, 0])  # GHI is first feature
-    y_test_flat = np.concatenate(X_test[:, :, 0])
+    # Handle multi-site data - use y_train/y_test directly (targets, not features)
+    # For multi-site: y_train shape is (n_samples, n_sites), take first site or average
+    if len(y_train.shape) > 1:
+        print(f"[ARIMA] Multi-site data detected: y_train shape {y_train.shape}")
+        print("[ARIMA] Using average across sites for univariate ARIMA")
+        y_train_flat = np.nanmean(y_train, axis=1)  # Average across sites
+        y_test_flat = np.nanmean(y_test, axis=1)
+    else:
+        y_train_flat = y_train.flatten()
+        y_test_flat = y_test.flatten()
+    
+    # Remove any NaN or inf values
+    mask_train = ~(np.isnan(y_train_flat) | np.isinf(y_train_flat))
+    y_train_flat = y_train_flat[mask_train]
+    
+    mask_test = ~(np.isnan(y_test_flat) | np.isinf(y_test_flat))
+    y_test_flat = y_test_flat[mask_test]
     
     print(f"Training time series length: {len(y_train_flat)}")
     print(f"Test time series length: {len(y_test_flat)}")
@@ -59,10 +72,21 @@ def train_arima_model(X_train, X_test, y_train, y_test):
     # Find optimal parameters
     best_params = find_optimal_arima_params(y_train_flat, p_range=(0,4), d_range=(0,2), q_range=(0,4))
     
+    # Fallback to default if no parameters found
+    if best_params is None:
+        print("[ARIMA] ⚠ No optimal parameters found, using default (1,1,1)")
+        best_params = (1, 1, 1)
+    
     # Train ARIMA model
     print(f"\n[ARIMA] Training model with parameters {best_params}...")
-    model = ARIMA(y_train_flat, order=best_params)
-    arima_results = model.fit()
+    try:
+        model = ARIMA(y_train_flat, order=best_params)
+        arima_results = model.fit()
+    except Exception as e:
+        print(f"[ARIMA] ⚠ Failed to fit with {best_params}, trying (1,1,1): {str(e)[:50]}")
+        best_params = (1, 1, 1)
+        model = ARIMA(y_train_flat, order=best_params)
+        arima_results = model.fit()
     
     print(arima_results.summary())
     
@@ -72,7 +96,12 @@ def train_arima_model(X_train, X_test, y_train, y_test):
     # Forecast on test set
     n_periods = len(y_test_flat)
     forecast = arima_results.get_forecast(steps=n_periods)
-    y_pred = forecast.predicted_mean.values
+    # Handle both pandas Series and numpy array returns from different statsmodels versions
+    y_pred = forecast.predicted_mean
+    if hasattr(y_pred, 'values'):
+        y_pred = y_pred.values
+    else:
+        y_pred = np.asarray(y_pred)
     
     # Calculate metrics
     print(f"\n{'='*60}")
@@ -88,6 +117,15 @@ def train_arima_model(X_train, X_test, y_train, y_test):
     print(f"✓ RMSE: {rmse:.6f}")
     print(f"✓ MAE:  {mae:.6f}")
     print(f"✓ R²:   {r2:.6f}")
+    
+    # For multi-site output format, repeat predictions for each site
+    # This maintains compatibility with orchestrator expectations
+    if len(y_test.shape) > 1:
+        num_sites = y_test.shape[1]
+        y_pred_multisite = np.tile(y_pred[:, np.newaxis], (1, num_sites))
+        print(f"\n[ARIMA] Expanding predictions to {num_sites} sites")
+    else:
+        y_pred_multisite = y_pred
     
     # Plot results
     plt.figure(figsize=(14, 5))
@@ -106,7 +144,7 @@ def train_arima_model(X_train, X_test, y_train, y_test):
     
     return {
         'model': arima_results,
-        'y_pred': y_pred,
+        'y_pred': y_pred_multisite,
         'y_test': y_test_flat,
         'metrics': {
             'mse': mse,

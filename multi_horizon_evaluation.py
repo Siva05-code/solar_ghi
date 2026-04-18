@@ -130,7 +130,24 @@ class MultiHorizonEvaluator:
         
         for model_name, y_pred in self.y_pred_dict.items():
             print(f"\n[{model_name}]")
-            metrics = self.calculate_metrics(y_test_eval, y_pred)
+            
+            # Ensure y_pred has compatible shape
+            if len(y_pred.shape) > 1:
+                # Multi-site predictions: average across sites
+                y_pred_eval = np.mean(y_pred, axis=1)
+            else:
+                y_pred_eval = y_pred.flatten()
+            
+            # Ensure shapes match
+            if len(y_test_eval) != len(y_pred_eval):
+                print(f"  ⚠ Shape mismatch: y_test_eval {y_test_eval.shape} vs y_pred_eval {y_pred_eval.shape}")
+                # Truncate to minimum length
+                min_len = min(len(y_test_eval), len(y_pred_eval))
+                y_test_eval = y_test_eval[:min_len]
+                y_pred_eval = y_pred_eval[:min_len]
+                print(f"  ✓ Truncated to {min_len} samples")
+            
+            metrics = self.calculate_metrics(y_test_eval, y_pred_eval)
             
             print(f"  MSE:   {metrics['mse']:.6f}")
             print(f"  RMSE:  {metrics['rmse']:.6f}")

@@ -21,7 +21,10 @@ warnings.filterwarnings('ignore')
 SITE_METADATA = {
     'Germany_Berlin': {'lat': 52.52, 'lon': 13.40, 'site_id': 0},
     'Egypt_Cairo': {'lat': 30.04, 'lon': 31.24, 'site_id': 1},
-    'India_Delhi': {'lat': 28.61, 'lon': 77.23, 'site_id': 2}
+    'India_Delhi': {'lat': 28.61, 'lon': 77.23, 'site_id': 2},
+    'India_Bangalore': {'lat': 12.97, 'lon': 77.59, 'site_id': 3},
+    'India_Pune': {'lat': 18.52, 'lon': 73.86, 'site_id': 4},
+    'India_Leh': {'lat': 34.15, 'lon': 77.58, 'site_id': 5}
 }
 
 

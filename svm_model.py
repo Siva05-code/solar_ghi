@@ -86,7 +86,7 @@ def train_svm_model(X_train, X_test, y_train, y_test, kernel='rbf', C=10):
     print(f"  MAPE: {mape:.6f}%")
     
     # Per-site metrics
-    site_names = ['Germany_Berlin', 'Egypt_Cairo', 'India_Delhi']
+    site_names = ['Germany_Berlin', 'Egypt_Cairo', 'India_Delhi', 'India_Bangalore', 'India_Pune', 'India_Leh']
     print(f"\nPer-Site Metrics:")
     for site_idx in range(n_sites):
         if site_idx < len(site_names):

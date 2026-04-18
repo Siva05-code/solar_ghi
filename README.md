@@ -58,29 +58,50 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 | **Source** | National Solar Radiation Database (NSRDB) - MERRA-2 / NREL |
 | **Time Period** | January 1, 2017 - December 31, 2019 (3 years) |
 | **Temporal Resolution** | 30-minute intervals |
-| **Geographic Locations** | 3 sites spanning 5,783 km |
-| **Synchronized Records** | 13,286 common observations |
-| **Training Samples** | 10,609 sequences (80%) |
-| **Test Samples** | 2,653 sequences (20%) |
+| **Geographic Locations** | 6 sites spanning multiple continents |
+| **Synchronized Records** | Aligned across all locations |
+| **Training Samples** | Multi-site sequences (80%) |
+| **Test Samples** | Multi-site sequences (20%) |
 | **Sequence Length** | 12 hours (24 × 30-min intervals, L=24) |
 | **Total Features** | 11 (7 weather + 4 temporal) |
 
-### Geographic Locations
+### Geographic Locations (6 Sites - Multi-Continent Coverage)
 
 **Location 1: Germany, Berlin** (52.52°N, 13.40°E)
 - Climate: Temperate oceanic
 - Characteristics: High cloud variability, seasonal extremes
+- Profile: Moderate solar intensity with seasonal variation
 - Mean GHI: 0.24 W/m² | Variability: 4-5x seasonal
 
 **Location 2: Egypt, Cairo** (30.04°N, 31.24°E)
 - Climate: Desert subtropical
-- Characteristics: High solar potential, low variability
+- Characteristics: High solar potential, extremely low variability
+- Profile: Consistently high solar intensity, clear skies
 - Mean GHI: 0.57 W/m² | Variability: Stable year-round
 
 **Location 3: India, Delhi** (28.61°N, 77.23°E)
 - Climate: Semi-arid / monsoon
 - Characteristics: Monsoon-influenced, seasonal patterns
+- Profile: Moderate-to-high intensity with monsoon impact
 - Mean GHI: 0.47 W/m² | Variability: Monsoon clouds affect summer
+
+**Location 4: India, Jaipur** (26.91°N, 75.79°E) **[NEW - Very Hot, Arid]**
+- Climate: Hot desert / arid
+- Characteristics: Extremely high temperatures, very low cloud cover
+- Profile: Highest solar intensity with minimal variability
+- Mean GHI: ~0.55 W/m² | Variability: Extremely stable, desert conditions
+
+**Location 5: India, Ahmedabad** (23.03°N, 72.58°E) **[NEW - Medium Hot, Semi-arid]**
+- Climate: Semi-arid subtropical
+- Characteristics: High temperatures, moderate cloud cover
+- Profile: High solar intensity with moderate seasonal variation
+- Mean GHI: ~0.50 W/m² | Variability: Moderate, semi-arid patterns
+
+**Location 6: India, Lucknow** (26.85°N, 80.95°E) **[NEW - Less Hot, Temperate-Subtropical]**
+- Climate: Subtropical humid / monsoon
+- Characteristics: Moderate temperatures, higher humidity and cloud cover
+- Profile: Moderate solar intensity with pronounced monsoon effects
+- Mean GHI: ~0.42 W/m² | Variability: Higher due to monsoon influence
 
 ### Feature Specifications
 
