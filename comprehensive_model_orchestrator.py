@@ -61,9 +61,9 @@ class ModelOrchestrator:
             'Germany_Berlin', 
             'Egypt_Cairo', 
             'India_Delhi',
-            'India_Jaipur',
-            'India_Ahmedabad', 
-            'India_Lucknow'
+            'India_Bangalore',
+            'India_Pune', 
+            'India_Leh'
         ]
         self.num_sites = len(self.sites)
     

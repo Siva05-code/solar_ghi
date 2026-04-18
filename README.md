@@ -73,9 +73,9 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 | 1 | Germany, Berlin | 52.52°N, 13.40°E | Temperate Oceanic | Moderate + seasonal | Original |
 | 2 | Egypt, Cairo | 30.04°N, 31.24°E | Desert Subtropical | Very High + stable | Original |
 | 3 | India, Delhi | 28.61°N, 77.23°E | Semi-Arid/Monsoon | High + monsoon | Original |
-| 4 | **India, Jaipur** | 26.91°N, 75.79°E | Hot Desert (Arid) | **Very High + stable** | ✨ NEW |
-| 5 | **India, Ahmedabad** | 23.03°N, 72.58°E | Semi-Arid Subtropical | **High + moderate** | ✨ NEW |
-| 6 | **India, Lucknow** | 26.85°N, 80.95°E | Subtropical/Monsoon | **Moderate + monsoon** | ✨ NEW |
+| 4 | **India, Bangalore** | 12.97°N, 77.59°E | Tropical Semi-Arid | **Moderate-High** | ✨ NEW |
+| 5 | **India, Pune** | 18.52°N, 73.86°E | Semi-Arid Subtropical | **Moderate-High + stable** | ✨ NEW |
+| 6 | **India, Leh** | 34.15°N, 77.58°E | High Altitude Arid | **High + stable** | ✨ NEW |
 
 **Detailed Location Profiles**:
 
@@ -100,27 +100,29 @@ Traditional forecasting approaches (ARIMA, statistical methods) cannot capture c
 - Mean GHI (normalized): 0.47 | Variability: Monsoon clouds affect May-Sept
 - Grid relevance: Represents South Asian patterns
 
-**Location 4: India, Jaipur** (26.91°N, 75.79°E) **[NEW - Very Hot/Arid]** 🔥
-- Climate: Hot desert / arid (Thar Desert proximity)
-- Characteristics: Extremely high temperatures (>45°C summer), very low cloud cover
-- Profile: **Highest solar intensity** with minimal variability, ~4-5% less clouding than Cairo
-- Mean GHI (normalized): ~0.55-0.58 | Variability: Extremely stable (<1.2x)
-- Temperature extremes: Min 0°C (winter), Max 48°C (summer)
-- Grid relevance: Ideal for solar farms, minimal forecast uncertainty
+**Location 4: India, Bangalore** (12.97°N, 77.59°E) **[NEW - Tropical Semi-Arid]** ☀️
+- Climate: Tropical semi-arid
+- Characteristics: Moderate temperatures (25-35°C), moderate cloud cover
+- Profile: **Moderate-to-high solar intensity** with moderate seasonal variation
+- Mean GHI (normalized): ~0.45-0.50 | Variability: Moderate (2-3x seasonal)
+- Seasonality: Southwest monsoon June-September affects cloud patterns
+- Grid relevance: Represents tropical Indian solar zones, good predictability
 
-**Location 5: India, Ahmedabad** (23.03°N, 72.58°E) **[NEW - Medium Hot/Semi-Arid]** ☀️
+**Location 5: India, Pune** (18.52°N, 73.86°E) **[NEW - Semi-Arid Subtropical]** 🌤️
 - Climate: Semi-arid subtropical
-- Characteristics: High temperatures (38-42°C summer), moderate cloud cover
-- Profile: **High solar intensity** with moderate seasonal variation
-- Mean GHI (normalized): ~0.50-0.53 | Variability: Moderate (2-3x seasonal)
-- Seasonality: Monsoon affects June-September (clouds), post-monsoon clear
-- Grid relevance: Represents hot semi-arid zones, moderate predictability
+- Characteristics: High temperatures (28-35°C summer), moderate-to-low cloud cover
+- Profile: **Moderate-to-high solar intensity** with moderate-to-stable patterns
+- Mean GHI (normalized): ~0.48-0.53 | Variability: Moderate (2-3x seasonal)
+- Seasonality: Southwest monsoon affects June-September (clouds), otherwise clear
+- Grid relevance: Represents Western Indian plateau climate, reliable forecasts
 
-**Location 6: India, Lucknow** (26.85°N, 80.95°E) **[NEW - Less Hot, Temperate-Subtropical]**
-- Climate: Subtropical humid / monsoon
-- Characteristics: Moderate temperatures, higher humidity and cloud cover
-- Profile: Moderate solar intensity with pronounced monsoon effects
-- Mean GHI: ~0.42 W/m² | Variability: Higher due to monsoon influence
+**Location 6: India, Leh** (34.15°N, 77.58°E) **[NEW - High Altitude Arid]** ⛰️
+- Climate: High altitude desert / arid
+- Characteristics: Low temperatures (often below 0°C winter), very low cloud cover
+- Profile: **High solar intensity** with extremely stable patterns
+- Mean GHI (normalized): ~0.48-0.52 | Variability: Very low (<1.5x)
+- Altitude: 3,500m above sea level, clear skies year-round
+- Grid relevance: Represents high-altitude solar potential, minimal variability
 
 ### Feature Specifications
 
